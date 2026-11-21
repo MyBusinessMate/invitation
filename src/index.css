@@ -1,0 +1,366 @@
+/* ==========================================================================
+   NEO MINDS LUXURY MENU-BOOK INVITATION — PURE EXACT SUPPLIED COVER
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: #F8E9DD;
+  color: #2D151A;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scroll track for smooth GSAP ScrollTrigger pinning */
+.scroll-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #F8E9DD;
+}
+
+/* Pinned viewport stage */
+.viewport-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #F8E9DD;
+}
+
+/* 3D Scene Perspective */
+.scene-perspective {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2600px;
+  perspective-origin: 50% 50%;
+  width: 100%;
+  height: 100%;
+}
+
+/* Book Group: Handles symmetric centering between closed and open states */
+.book-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Soft ambient contact shadow onto #F8E9DD background */
+.book-ambient-shadow {
+  position: absolute;
+  top: 4%;
+  height: 96%;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: 
+    0 26px 65px -10px rgba(65, 18, 28, 0.32),
+    0 12px 30px -8px rgba(0, 0, 0, 0.18),
+    0 4px 10px -2px rgba(65, 18, 28, 0.12);
+  pointer-events: none;
+  z-index: 1;
+  will-change: width, left, opacity;
+}
+
+/* --------------------------------------------------------------------------
+   MENU-BOOK STRUCTURE: TWO EXACTLY EQUAL PANELS
+   Aspect Ratio of each panel = 691 / 932 ≈ 0.7414 (~3:4)
+   Total Opened Width = 2 * Panel Width
+   -------------------------------------------------------------------------- */
+.menu-book {
+  position: relative;
+  height: min(80vh, 700px);
+  width: calc(min(80vh, 700px) * 0.7414 * 2);
+  transform-style: preserve-3d;
+  user-select: none;
+}
+
+/* Responsive adjustment for mobile screens */
+@media (max-width: 767px) {
+  .scene-perspective {
+    perspective: 1800px;
+    perspective-origin: 50% 50%;
+  }
+
+  .menu-book {
+    height: min(74vh, 520px);
+    width: calc(min(74vh, 520px) * 0.7414 * 2);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   EQUAL PANELS: BOTH HAVE IDENTICAL WIDTH, HEIGHT, AND BORDERS
+   -------------------------------------------------------------------------- */
+.menu-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  border-radius: 6px;
+  transform-style: preserve-3d;
+}
+
+/* 1. RIGHT PANEL (Fixed Base / Right Page) */
+.right-panel {
+  left: 50%;
+  border-radius: 4px;
+  background-color: #F8E9DD;
+  overflow: hidden;
+  z-index: 4;
+}
+
+/* 2. LEFT PANEL (Front Cover / Left Page, Hinged at Center Spine) */
+.left-panel {
+  left: 50%;
+  transform-origin: 0% 50%; /* Center spine hinge */
+  transform-style: preserve-3d;
+  will-change: transform;
+  z-index: 10;
+}
+
+/* Double-sided panel faces for the left panel */
+.panel-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* FRONT FACE: Clean, Uninterrupted Exact Supplied Front Cover */
+.front-cover-face {
+  transform: translateZ(1px);
+  background-color: #F8E9DD;
+  box-shadow: 
+    3px 0 12px rgba(50, 12, 18, 0.38),
+    1px 0 4px rgba(50, 12, 18, 0.2);
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.cover-artwork-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+
+.cover-light-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(40, 10, 15, 0.45) 0%, rgba(60, 15, 25, 0.2) 60%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 14;
+}
+
+/* BACK FACE: Inner-Facing Page of Left Panel (Visible when opened) */
+.inner-facing-face {
+  transform: rotateY(180deg) translateZ(1px);
+  background-color: #F8E9DD;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Exact supplied floral background image on left inner page */
+.inner-page-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   UNIFORM #F8E9DD INTERIOR SURFACE ON BOTH PANELS
+   -------------------------------------------------------------------------- */
+.panel-interior-surface {
+  position: absolute;
+  inset: 0;
+  background-color: #F8E9DD;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   SYMMETRICAL DOUBLE-LINE MAROON BORDER FOR BOTH INSIDE PAGES
+   - Outer line: Deep maroon (#5C1B1F), 1.5px solid (slightly thicker)
+   - Inner line: Deep maroon (#5C1B1F), 1.0px solid (slightly thinner)
+   - Equal spacing between border and all 4 page edges (inset: 18px)
+   - Clean, elegant 3.5px spacing between lines
+   - Identical on Left and Right pages for a cohesive book spread
+   -------------------------------------------------------------------------- */
+.page-border-double {
+  position: absolute;
+  inset: 18px; /* Equal margins from all 4 page edges: top, bottom, left, right */
+  border: 1.5px solid #5C1B1F; /* Outer line: slightly thicker */
+  border-radius: 4px;
+  padding: 3.5px; /* Clean spacing between outer and inner lines */
+  pointer-events: none;
+  box-sizing: border-box;
+  z-index: 10;
+  transform: translateZ(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-border-inner {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #5C1B1F; /* Inner line: slightly thinner */
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .page-border-double {
+    inset: 10px;
+    padding: 2.5px;
+  }
+}
+
+/* Interior PDF Frame on Right Panel */
+.interior-pdf-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   CLEAN, NARROW CENTER HINGE / SPINE
+   Separation without thick, overlapping, or uneven lines
+   -------------------------------------------------------------------------- */
+.center-hinge-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+  background-color: rgba(92, 27, 31, 0.22);
+  z-index: 12;
+  pointer-events: none;
+}
+
+.spine-crease-shadow {
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 10px;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(92, 27, 31, 0.1) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   INSIDE LEFT PAGE — ELEGANT LUXURY TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+.inner-page-text-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 15;
+  padding: 0 16%;
+}
+
+.inner-page-text-content {
+  width: 100%;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 1. Main Heading Line 1: A CELEBRATION OF */
+.inner-heading-sub {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: clamp(10.5px, 1.25vw, 12.5px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6B1725;
+  line-height: 1.35;
+  margin-bottom: clamp(4px, 0.7vh, 6px);
+  text-align: center;
+  text-rendering: optimizeLegibility;
+}
+
+/* 2. Main Heading Line 2: INNOVATION & GROWTH */
+.inner-heading-main {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: clamp(13.5px, 1.65vw, 16.5px);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #6B1725;
+  line-height: 1.3;
+  margin-bottom: clamp(14px, 2.2vh, 18px);
+  text-align: center;
+  text-rendering: optimizeLegibility;
+}
+
+/* 3. Supporting Body: Celebrating the journey, achievements and milestones of Neo Minds Tech Hub. */
+.inner-body-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(12.5px, 1.55vw, 14.5px);
+  font-style: italic;
+  font-weight: 500;
+  color: rgba(107, 23, 37, 0.82);
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  margin-bottom: clamp(14px, 2.2vh, 18px);
+  text-align: center;
+  max-width: 220px;
+  text-rendering: optimizeLegibility;
+}
+
+/* 4. Closing: Thank you for being part of our journey. */
+.inner-closing-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-weight: 600;
+  color: #6B1725;
+  letter-spacing: 0.025em;
+  line-height: 1.45;
+  text-align: center;
+  max-width: 220px;
+  text-rendering: optimizeLegibility;
+}
