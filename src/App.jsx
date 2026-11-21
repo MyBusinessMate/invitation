@@ -114,16 +114,18 @@ export default function App() {
       });
 
       // MOBILE (< 768px)
-      // On mobile, the invitation card stays stuck directly in the center of the screen
-      // without pushing deep into 3D space or shrinking down.
-      // As the user scrolls, the front cover swings open sideways around its hinge
-      // to reveal the interior anniversary invitation card standing proud and centered.
+      // On mobile, the card starts centered and intact.
+      // In Phase 1: As user scrolls, the front cover swings open sideways (0deg -> -180deg)
+      // revealing the inside anniversary invitation while keeping it grounded.
+      // In Phase 2: As user scrolls further, the book smoothly reframes (xPercent: -25 -> 0, scale: 1 -> 0.49)
+      // and brings the left page ("A Celebration of Innovation & Growth") into full view
+      // alongside the right page, so the complete invitation spread is accessible and visible on mobile!
       mm.add('(max-width: 767px)', () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top top',
-            end: '+=1800',
+            end: '+=2400',
             pin: true,
             scrub: 1.2,
             anticipatePin: 1,
@@ -131,14 +133,11 @@ export default function App() {
           },
         });
 
-        // 1. Keep book-group locked at xPercent: -25 and scale: 1
-        // This ensures the invitation card (right panel) is perfectly centered horizontally & vertically throughout the scroll.
+        // 1. Initial State: Centered closed card
         tl.set(bookGroupRef.current, {
           xPercent: -25,
           scale: 1,
         });
-
-        // Ambient shadow stays firmly centered under the revealed invitation card
         tl.set(rightShadowRef.current, {
           opacity: 0.35,
         });
@@ -146,40 +145,60 @@ export default function App() {
           opacity: 0,
         });
 
-        // 2. Cover opens sideways around its hinge: 0deg -> -180deg
+        // Phase 1 (0 to 0.5): Cover opens sideways around its hinge
         tl.to(
           leftPanelRef.current,
           {
             rotateY: -180,
             ease: 'power2.inOut',
-            duration: 1,
+            duration: 0.5,
           },
           0
         );
 
-        // 3. Center spine crease shadow softens as card opens
-        tl.fromTo(
+        // Center crease shadow softens
+        tl.to(
           spineShadowRef.current,
-          {
-            opacity: 0.65,
-          },
           {
             opacity: 0.22,
             ease: 'power1.out',
-            duration: 1,
+            duration: 0.5,
           },
           0
         );
 
-        // 4. Cover lighting shift
+        // Cover lighting shift
         tl.to(
           leftPanelLightRef.current,
           {
             opacity: 0.4,
             ease: 'power1.in',
-            duration: 0.5,
+            duration: 0.25,
           },
           0
+        );
+
+        // Left shadow fades in as cover lands flat
+        tl.to(
+          leftShadowRef.current,
+          {
+            opacity: 0.35,
+            ease: 'power1.in',
+            duration: 0.2,
+          },
+          0.3
+        );
+
+        // Phase 2 (0.5 to 1.0): Reframes the entire spread to bring the left page into full view!
+        tl.to(
+          bookGroupRef.current,
+          {
+            xPercent: 0,
+            scale: 0.485,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          },
+          0.5
         );
       });
     },

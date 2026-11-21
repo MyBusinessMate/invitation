@@ -51,6 +51,36 @@ export default function PdfInvitation() {
 
         await renderTask.promise;
         if (!isCancelled) {
+          // Precise typographic patch: replace 'YOU AND UR FAMILY ARE' with 'YOU & YOUR FAMILY ARE'
+          try {
+            if (document.fonts) {
+              await document.fonts.ready;
+            }
+            const yTop = Math.floor(canvas.height * 0.193);
+            const yHeight = Math.floor(canvas.height * 0.021);
+            const xLeft = Math.floor(canvas.width * 0.16);
+            const xWidth = Math.floor(canvas.width * 0.68);
+
+            const bgData = context.getImageData(Math.floor(canvas.width * 0.20), yTop - 3, 1, 1).data;
+            const bgCol = `rgb(${bgData[0]}, ${bgData[1]}, ${bgData[2]})`;
+
+            // Clear original text
+            context.fillStyle = bgCol;
+            context.fillRect(xLeft, yTop, xWidth, yHeight);
+
+            // Re-render corrected text matching exact luxury Cinzel typography
+            const fontSize = Math.round(canvas.height * 0.0135);
+            context.font = `600 ${fontSize}px Cinzel, serif`;
+            context.fillStyle = '#5C1B1F';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.letterSpacing = '3.5px';
+            const textY = yTop + (yHeight / 2) + 1;
+            context.fillText('YOU & YOUR FAMILY ARE', canvas.width / 2, textY);
+          } catch (e) {
+            console.warn('Canvas text replacement note:', e);
+          }
+
           setPdfRendered(true);
         }
       } catch (err) {
