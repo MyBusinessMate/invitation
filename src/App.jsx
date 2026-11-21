@@ -11,7 +11,8 @@ export default function App() {
   const containerRef = useRef(null);
   const bookGroupRef = useRef(null);
   const leftPanelRef = useRef(null);
-  const bookShadowRef = useRef(null);
+  const rightShadowRef = useRef(null);
+  const leftShadowRef = useRef(null);
   const spineShadowRef = useRef(null);
   const leftPanelLightRef = useRef(null);
 
@@ -58,25 +59,35 @@ export default function App() {
           0
         );
 
-        // 3. Ambient shadow expands from single-panel width to full double-panel width
+        // 3. Right shadow stays grounded under right panel throughout
         tl.fromTo(
-          bookShadowRef.current,
+          rightShadowRef.current,
           {
-            width: '50%',
-            left: '50%',
             opacity: 0.35,
           },
           {
-            width: '100%',
-            left: '0%',
-            opacity: 0.38,
-            ease: 'power2.inOut',
+            opacity: 0.35,
             duration: 1,
           },
           0
         );
 
-        // 4. Center spine crease shadow softens slightly as the book opens flat
+        // 4. Left shadow is completely hidden (0 opacity) while the cover is closed or lifted in the air!
+        // It ONLY fades in at the very end (from 0.7 to 1.0) when the left panel actually comes down flat on the desk!
+        tl.fromTo(
+          leftShadowRef.current,
+          {
+            opacity: 0,
+          },
+          {
+            opacity: 0.35,
+            ease: 'power2.in',
+            duration: 0.3,
+          },
+          0.7
+        );
+
+        // 5. Center spine crease shadow softens slightly as the book opens flat
         tl.fromTo(
           spineShadowRef.current,
           {
@@ -90,7 +101,7 @@ export default function App() {
           0
         );
 
-        // 5. Lighting shift on front cover as it rotates away from ambient light
+        // 6. Lighting shift on front cover as it rotates away from ambient light
         tl.to(
           leftPanelLightRef.current,
           {
@@ -128,10 +139,11 @@ export default function App() {
         });
 
         // Ambient shadow stays firmly centered under the revealed invitation card
-        tl.set(bookShadowRef.current, {
-          width: '50%',
-          left: '50%',
+        tl.set(rightShadowRef.current, {
           opacity: 0.35,
+        });
+        tl.set(leftShadowRef.current, {
+          opacity: 0,
         });
 
         // 2. Cover opens sideways around its hinge: 0deg -> -180deg
@@ -180,8 +192,9 @@ export default function App() {
         <div className="scene-perspective">
           <div className="book-group" ref={bookGroupRef}>
             
-            {/* Global soft ambient contact shadow under the menu book */}
-            <div className="book-ambient-shadow" ref={bookShadowRef} />
+            {/* Separate, dedicated realistic contact shadows */}
+            <div className="book-ambient-shadow shadow-right" ref={rightShadowRef} />
+            <div className="book-ambient-shadow shadow-left" ref={leftShadowRef} />
 
             {/* Main Luxury Menu-Book Structure: Two Exactly Equal Panels */}
             <div className="menu-book">

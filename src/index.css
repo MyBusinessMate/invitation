@@ -65,8 +65,9 @@ html, body {
 .book-ambient-shadow {
   position: absolute;
   top: 4%;
+  width: 50%;
   height: 96%;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
   box-shadow: 
     0 26px 65px -10px rgba(65, 18, 28, 0.32),
@@ -74,7 +75,17 @@ html, body {
     0 4px 10px -2px rgba(65, 18, 28, 0.12);
   pointer-events: none;
   z-index: 1;
-  will-change: width, left, opacity;
+  will-change: opacity;
+}
+
+.shadow-right {
+  left: 50%;
+  opacity: 0.35;
+}
+
+.shadow-left {
+  left: 0%;
+  opacity: 0;
 }
 
 /* --------------------------------------------------------------------------
